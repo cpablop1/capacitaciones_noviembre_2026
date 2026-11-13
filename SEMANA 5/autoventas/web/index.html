@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoVentas — Sistema de venta de autos</title>
+    <meta name="description" content="Sistema de gestión y venta de automóviles: inventario, clientes, ventas y resumen.">
+    <link rel="stylesheet" href="css/estilos.css">
+    <!-- Orden de carga: validaciones → lógica → persistencia → interfaz → arranque -->
+    <script src="js/validaciones.js" defer></script>
+    <script src="js/logica.js" defer></script>
+    <script src="js/persistencia.js" defer></script>
+    <script src="js/interfaz.js" defer></script>
+    <script src="js/main.js" defer></script>
+</head>
+
+<body>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+
+    <header class="encabezado">
+        <div class="encabezado-marca">
+            <span class="logo" aria-hidden="true">AV</span>
+            <div>
+                <p class="titulo-app">AutoVentas</p>
+                <p class="subtitulo-app">Sistema de gestión y venta de automóviles</p>
+            </div>
+        </div>
+        <nav class="pestanas" role="tablist" aria-label="Secciones de AutoVentas">
+            <button type="button" role="tab" id="tab-inventario" aria-controls="inventario" data-seccion="inventario">Inventario</button>
+            <button type="button" role="tab" id="tab-clientes" aria-controls="clientes" data-seccion="clientes">Clientes</button>
+            <button type="button" role="tab" id="tab-ventas" aria-controls="ventas" data-seccion="ventas">Ventas</button>
+            <button type="button" role="tab" id="tab-resumen" aria-controls="resumen" data-seccion="resumen">Resumen</button>
+        </nav>
+    </header>
+
+    <main id="contenido" class="contenido">
+        <noscript>
+            <p class="noscript">AutoVentas necesita JavaScript para funcionar. Actívelo en su navegador.</p>
+        </noscript>
+
+        <!-- ============ INVENTARIO (RF-01, RF-02) ============ -->
+        <section id="inventario" class="seccion" role="tabpanel" aria-labelledby="tab-inventario" tabindex="-1">
+            <h1 class="titulo-seccion">Inventario</h1>
+            <div class="rejilla-formulario">
+                <form id="form-auto" class="tarjeta formulario" novalidate aria-labelledby="titulo-form-auto">
+                    <h2 id="titulo-form-auto">Nuevo auto</h2>
+                    <div class="resumen-errores" id="errores-auto" role="alert" hidden></div>
+
+                    <div class="campo">
+                        <label for="auto-marca">Marca <span class="req" aria-hidden="true">*</span></label>
+                        <input id="auto-marca" name="marca" list="lista-marcas" autocomplete="off" maxlength="40" aria-describedby="error-auto-marca">
+                        <p class="error-campo" id="error-auto-marca"></p>
+                    </div>
+                    <div class="campo">
+                        <label for="auto-modelo">Modelo <span class="req" aria-hidden="true">*</span></label>
+                        <input id="auto-modelo" name="modelo" autocomplete="off" maxlength="40" aria-describedby="error-auto-modelo">
+                        <p class="error-campo" id="error-auto-modelo"></p>
+                    </div>
+                    <div class="campo-doble">
+                        <div class="campo">
+                            <label for="auto-anio">Año <span class="req" aria-hidden="true">*</span></label>
+                            <input id="auto-anio" name="anio" inputmode="numeric" autocomplete="off" aria-describedby="ayuda-auto-anio error-auto-anio">
+                            <p class="ayuda" id="ayuda-auto-anio">1990 – año actual</p>
+                            <p class="error-campo" id="error-auto-anio"></p>
+                        </div>
+                        <div class="campo">
+                            <label for="auto-kilometraje">Kilometraje <span class="req" aria-hidden="true">*</span></label>
+                            <input id="auto-kilometraje" name="kilometraje" inputmode="numeric" autocomplete="off" aria-describedby="error-auto-kilometraje">
+                            <p class="error-campo" id="error-auto-kilometraje"></p>
+                        </div>
+                    </div>
+                    <div class="campo">
+                        <label for="auto-precio">Precio (Q) <span class="req" aria-hidden="true">*</span></label>
+                        <input id="auto-precio" name="precio" inputmode="decimal" autocomplete="off" aria-describedby="ayuda-auto-precio error-auto-precio">
+                        <p class="ayuda" id="ayuda-auto-precio">Mayor a 0. Ejemplo: 85000 o 85,000.50</p>
+                        <p class="error-campo" id="error-auto-precio"></p>
+                    </div>
+                    <div class="campo">
+                        <span class="etiqueta">Estado</span>
+                        <p id="auto-estado" class="estado-auto">Disponible (se asigna al guardar)</p>
+                    </div>
+
+                    <div class="botones">
+                        <button type="submit" class="btn primario ancho" id="btn-guardar-auto">Guardar auto</button>
+                        <button type="button" class="btn" id="btn-limpiar-auto">Nuevo / Limpiar</button>
+                        <button type="button" class="btn peligro" id="btn-eliminar-auto" disabled>Eliminar</button>
+                        <button type="button" class="btn ancho" id="btn-vender-auto" disabled>Vender este auto →</button>
+                    </div>
+                    <p class="nota">* Campos obligatorios. Seleccione un auto de la lista para editarlo.</p>
+                </form>
+
+                <div class="tarjeta listado">
+                    <h2>Inventario de autos</h2>
+                    <form class="filtros" id="filtros-autos" role="search" aria-label="Filtros del inventario" novalidate>
+                        <div class="campo filtro-ancho">
+                            <label for="filtro-texto">Buscar (marca o modelo)</label>
+                            <input type="search" id="filtro-texto" autocomplete="off">
+                        </div>
+                        <div class="campo">
+                            <label for="filtro-marca">Marca</label>
+                            <input id="filtro-marca" list="lista-marcas" autocomplete="off">
+                        </div>
+                        <div class="campo">
+                            <label for="filtro-anio">Año</label>
+                            <input id="filtro-anio" inputmode="numeric" autocomplete="off">
+                        </div>
+                        <div class="campo">
+                            <label for="filtro-precio-min">Precio mín. (Q)</label>
+                            <input id="filtro-precio-min" inputmode="decimal" autocomplete="off">
+                        </div>
+                        <div class="campo">
+                            <label for="filtro-precio-max">Precio máx. (Q)</label>
+                            <input id="filtro-precio-max" inputmode="decimal" autocomplete="off">
+                        </div>
+                        <div class="campo">
+                            <label for="filtro-estado">Estado</label>
+                            <select id="filtro-estado">
+                                <option>Todos</option>
+                                <option>Disponible</option>
+                                <option>Vendido</option>
+                            </select>
+                        </div>
+                        <div class="campo campo-boton">
+                            <button type="reset" class="btn">Limpiar filtros</button>
+                        </div>
+                    </form>
+                    <p class="info" id="info-autos" aria-live="polite"></p>
+                    <div class="tabla-contenedor">
+                        <table class="tabla" id="tabla-autos">
+                            <caption class="solo-lectores">Autos del inventario. Seleccione una fila para editarla.</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="centro">ID</th>
+                                    <th scope="col">Marca</th>
+                                    <th scope="col">Modelo</th>
+                                    <th scope="col" class="centro">Año</th>
+                                    <th scope="col" class="derecha">Precio</th>
+                                    <th scope="col" class="derecha">Kilometraje</th>
+                                    <th scope="col" class="centro">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ CLIENTES (RF-03) ============ -->
+        <section id="clientes" class="seccion" role="tabpanel" aria-labelledby="tab-clientes" tabindex="-1" hidden>
+            <h1 class="titulo-seccion">Clientes</h1>
+            <div class="rejilla-formulario">
+                <form id="form-cliente" class="tarjeta formulario" novalidate aria-labelledby="titulo-form-cliente">
+                    <h2 id="titulo-form-cliente">Nuevo cliente</h2>
+                    <div class="resumen-errores" id="errores-cliente" role="alert" hidden></div>
+
+                    <div class="campo">
+                        <label for="cliente-nombre">Nombre completo <span class="req" aria-hidden="true">*</span></label>
+                        <input id="cliente-nombre" name="nombre" autocomplete="off" maxlength="80" aria-describedby="error-cliente-nombre">
+                        <p class="error-campo" id="error-cliente-nombre"></p>
+                    </div>
+                    <div class="campo">
+                        <label for="cliente-telefono">Teléfono <span class="req" aria-hidden="true">*</span></label>
+                        <input id="cliente-telefono" name="telefono" type="tel" autocomplete="off" maxlength="20" aria-describedby="ayuda-cliente-telefono error-cliente-telefono">
+                        <p class="ayuda" id="ayuda-cliente-telefono">De 8 a 15 dígitos. Ejemplo: 5555-1234</p>
+                        <p class="error-campo" id="error-cliente-telefono"></p>
+                    </div>
+                    <div class="campo">
+                        <label for="cliente-correo">Correo <span class="req" aria-hidden="true">*</span></label>
+                        <input id="cliente-correo" name="correo" type="email" autocomplete="off" maxlength="100" aria-describedby="ayuda-cliente-correo error-cliente-correo">
+                        <p class="ayuda" id="ayuda-cliente-correo">Ejemplo: nombre@dominio.com</p>
+                        <p class="error-campo" id="error-cliente-correo"></p>
+                    </div>
+                    <div class="campo">
+                        <label for="cliente-documento">Documento (DPI / pasaporte) <span class="req" aria-hidden="true">*</span></label>
+                        <input id="cliente-documento" name="documento" autocomplete="off" maxlength="20" aria-describedby="error-cliente-documento">
+                        <p class="error-campo" id="error-cliente-documento"></p>
+                    </div>
+
+                    <div class="botones">
+                        <button type="submit" class="btn primario ancho" id="btn-guardar-cliente">Guardar cliente</button>
+                        <button type="button" class="btn" id="btn-limpiar-cliente">Nuevo / Limpiar</button>
+                        <button type="button" class="btn peligro" id="btn-eliminar-cliente" disabled>Eliminar</button>
+                    </div>
+                    <p class="nota">* Campos obligatorios. El documento no puede repetirse entre clientes.</p>
+                </form>
+
+                <div class="tarjeta listado">
+                    <h2>Clientes registrados</h2>
+                    <div class="filtros filtros-simple" role="search">
+                        <div class="campo filtro-ancho">
+                            <label for="buscar-clientes">Buscar (nombre, documento, correo o teléfono)</label>
+                            <input type="search" id="buscar-clientes" autocomplete="off">
+                        </div>
+                    </div>
+                    <p class="info" id="info-clientes" aria-live="polite"></p>
+                    <div class="tabla-contenedor">
+                        <table class="tabla" id="tabla-clientes">
+                            <caption class="solo-lectores">Clientes ordenados por ID. Seleccione una fila para editarla.</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="centro">ID</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Documento</th>
+                                    <th scope="col">Teléfono</th>
+                                    <th scope="col">Correo</th>
+                                    <th scope="col" class="centro">Compras</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ VENTAS (RF-04, RF-05) ============ -->
+        <section id="ventas" class="seccion" role="tabpanel" aria-labelledby="tab-ventas" tabindex="-1" hidden>
+            <h1 class="titulo-seccion">Ventas</h1>
+            <div class="tarjeta">
+                <h2>Registrar venta</h2>
+                <div class="rejilla-venta">
+                    <div class="selector" id="selector-cliente">
+                        <label class="etiqueta-selector" for="buscar-venta-cliente">1. Cliente <span class="req" aria-hidden="true">*</span></label>
+                        <p class="ayuda" id="ayuda-venta-cliente">Buscar por nombre, documento, teléfono o correo</p>
+                        <input type="search" id="buscar-venta-cliente" class="selector-entrada" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="opciones-venta-cliente" aria-describedby="ayuda-venta-cliente" autocomplete="off">
+                        <ul class="selector-opciones" id="opciones-venta-cliente" role="listbox" aria-label="Clientes"></ul>
+                        <p class="info selector-info" aria-live="polite"></p>
+                        <p class="selector-elegido" aria-live="polite"></p>
+                    </div>
+
+                    <div class="selector" id="selector-auto">
+                        <label class="etiqueta-selector" for="buscar-venta-auto">2. Auto disponible <span class="req" aria-hidden="true">*</span></label>
+                        <p class="ayuda" id="ayuda-venta-auto">Buscar por marca, modelo, año o #id</p>
+                        <input type="search" id="buscar-venta-auto" class="selector-entrada" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="opciones-venta-auto" aria-describedby="ayuda-venta-auto" autocomplete="off">
+                        <ul class="selector-opciones" id="opciones-venta-auto" role="listbox" aria-label="Autos disponibles"></ul>
+                        <p class="info selector-info" aria-live="polite"></p>
+                        <p class="selector-elegido" aria-live="polite"></p>
+                    </div>
+
+                    <div class="detalle-venta">
+                        <h3>3. Detalle</h3>
+                        <div class="fila-detalle">
+                            <label for="venta-descuento">Descuento (%)</label>
+                            <span class="descuento-caja">
+                                <input id="venta-descuento" inputmode="decimal" value="0" autocomplete="off" aria-describedby="ayuda-descuento">
+                                <span class="ayuda" id="ayuda-descuento">máx. 15 %</span>
+                            </span>
+                        </div>
+                        <dl class="calculo">
+                            <div class="fila-detalle"><dt>Precio del auto</dt><dd id="venta-precio">—</dd></div>
+                            <div class="fila-detalle"><dt>Descuento</dt><dd id="venta-monto-descuento">—</dd></div>
+                            <div class="fila-detalle total"><dt>Total a pagar</dt><dd id="venta-total">—</dd></div>
+                        </dl>
+                        <p class="error-campo" id="venta-error" aria-live="polite"></p>
+                        <button type="button" class="btn primario ancho" id="btn-registrar-venta">Registrar venta</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tarjeta">
+                <h2>Historial de ventas</h2>
+                <p class="info" id="info-ventas" aria-live="polite"></p>
+                <div class="tabla-contenedor">
+                    <table class="tabla" id="tabla-ventas">
+                        <caption class="solo-lectores">Historial de ventas, de la más reciente a la más antigua.</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col" class="centro">No.</th>
+                                <th scope="col" class="centro">Fecha</th>
+                                <th scope="col">Cliente</th>
+                                <th scope="col">Documento</th>
+                                <th scope="col">Auto</th>
+                                <th scope="col" class="derecha">Precio</th>
+                                <th scope="col" class="centro">Desc. %</th>
+                                <th scope="col" class="derecha">Descuento</th>
+                                <th scope="col" class="derecha">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ RESUMEN (RF-06) ============ -->
+        <section id="resumen" class="seccion" role="tabpanel" aria-labelledby="tab-resumen" tabindex="-1" hidden>
+            <h1 class="titulo-seccion">Resumen</h1>
+            <div class="kpis">
+                <div class="tarjeta kpi"><p class="kpi-titulo">Autos disponibles</p><p class="kpi-valor verde" id="kpi-autos_disponibles">0</p></div>
+                <div class="tarjeta kpi"><p class="kpi-titulo">Autos vendidos</p><p class="kpi-valor naranja" id="kpi-autos_vendidos">0</p></div>
+                <div class="tarjeta kpi"><p class="kpi-titulo">Total vendido</p><p class="kpi-valor azul" id="kpi-total_vendido">Q 0.00</p></div>
+                <div class="tarjeta kpi"><p class="kpi-titulo">Ventas realizadas</p><p class="kpi-valor" id="kpi-cantidad_ventas">0</p></div>
+                <div class="tarjeta kpi"><p class="kpi-titulo">Clientes registrados</p><p class="kpi-valor" id="kpi-clientes">0</p></div>
+                <div class="tarjeta kpi"><p class="kpi-titulo">Valor del inventario disponible</p><p class="kpi-valor" id="kpi-valor_inventario">Q 0.00</p></div>
+            </div>
+            <div class="rejilla-resumen">
+                <div class="tarjeta">
+                    <h2>Últimas ventas</h2>
+                    <div class="tabla-contenedor">
+                        <table class="tabla" id="tabla-ultimas">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="centro">Fecha</th>
+                                    <th scope="col">Cliente</th>
+                                    <th scope="col">Auto</th>
+                                    <th scope="col" class="derecha">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tarjeta">
+                    <h2>Inventario por marca</h2>
+                    <div class="tabla-contenedor">
+                        <table class="tabla" id="tabla-marcas">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Marca</th>
+                                    <th scope="col" class="centro">Disponibles</th>
+                                    <th scope="col" class="centro">Vendidos</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="pie">AutoVentas · versión web · los datos se guardan en este navegador</footer>
+
+    <datalist id="lista-marcas"></datalist>
+
+    <!-- Mensajes breves (equivalente a la barra de estado de escritorio) -->
+    <div class="avisos" id="avisos" aria-live="polite" aria-atomic="false"></div>
+
+    <!-- Diálogo único para confirmaciones y avisos -->
+    <dialog class="dialogo" id="dialogo" aria-labelledby="dialogo-titulo">
+        <form method="dialog">
+            <h2 id="dialogo-titulo"></h2>
+            <div id="dialogo-cuerpo" class="dialogo-cuerpo"></div>
+            <div class="dialogo-botones">
+                <button type="submit" value="cancelar" class="btn" id="dialogo-cancelar">Cancelar</button>
+                <button type="submit" value="aceptar" class="btn primario" id="dialogo-aceptar">Aceptar</button>
+            </div>
+        </form>
+    </dialog>
+</body>
+
+</html>
