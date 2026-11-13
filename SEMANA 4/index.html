@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitud de empleo | Bolsa de talento</title>
+    <meta name="description" content="Registra tus datos personales, formación académica y experiencia laboral para participar en futuros procesos de selección.">
+    <link rel="stylesheet" href="estilos.css">
+    <script src="validaciones.js" defer></script>
+</head>
+
+<body>
+    <header class="encabezado">
+        <div class="encabezado-contenido">
+            <p class="etiqueta-superior">Bolsa de talento</p>
+            <h1>Solicitud de empleo</h1>
+            <p class="intro">
+                Registra tus datos para participar en nuestros próximos procesos de selección de personal.
+                Completar el formulario te tomará solo unos minutos.
+            </p>
+        </div>
+    </header>
+
+    <main class="contenedor">
+        <!-- novalidate: todas las validaciones y mensajes los maneja validaciones.js -->
+        <form id="formRegistro" novalidate>
+
+            <p class="nota-obligatorio"><span class="obligatorio" aria-hidden="true">*</span> Los campos marcados son obligatorios.</p>
+
+            <!-- ============ 1. DATOS PERSONALES ============ -->
+            <section class="seccion" aria-labelledby="titulo-personales">
+                <div class="seccion-cabecera">
+                    <span class="numero" aria-hidden="true">1</span>
+                    <div>
+                        <h2 id="titulo-personales">Datos personales</h2>
+                        <p>Cuéntanos quién eres.</p>
+                    </div>
+                </div>
+
+                <div class="rejilla">
+                    <div class="campo">
+                        <label for="nombres">Nombres <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <input class="control" type="text" id="nombres" name="nombres" autocomplete="given-name" placeholder="Ej. María Fernanda">
+                        <p class="mensaje-error" id="error-nombres" aria-live="polite"></p>
+                    </div>
+
+                    <div class="campo">
+                        <label for="apellidos">Apellidos <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <input class="control" type="text" id="apellidos" name="apellidos" autocomplete="family-name" placeholder="Ej. López Pérez">
+                        <p class="mensaje-error" id="error-apellidos" aria-live="polite"></p>
+                    </div>
+
+                    <div class="campo">
+                        <label for="fechaNacimiento">Fecha de nacimiento <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <input class="control" type="date" id="fechaNacimiento" name="fechaNacimiento" autocomplete="bday">
+                        <p class="mensaje-error" id="error-fechaNacimiento" aria-live="polite"></p>
+                    </div>
+
+                    <div class="campo">
+                        <label for="dpi">DPI <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <input class="control" type="text" id="dpi" name="dpi" inputmode="numeric" autocomplete="off" placeholder="13 dígitos, sin espacios">
+                        <p class="ayuda">Documento Personal de Identificación (13 dígitos).</p>
+                        <p class="mensaje-error" id="error-dpi" aria-live="polite"></p>
+                    </div>
+
+                    <fieldset class="campo grupo">
+                        <legend>Género <span class="obligatorio" aria-hidden="true">*</span></legend>
+                        <div class="opciones">
+                            <label class="opcion"><input type="radio" name="genero" value="Masculino"><span>Masculino</span></label>
+                            <label class="opcion"><input type="radio" name="genero" value="Femenino"><span>Femenino</span></label>
+                            <label class="opcion"><input type="radio" name="genero" value="Otro"><span>Otro / Prefiero no decir</span></label>
+                        </div>
+                        <p class="mensaje-error" id="error-genero" aria-live="polite"></p>
+                    </fieldset>
+
+                    <div class="campo">
+                        <label for="fotografia">Fotografía <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <div class="archivo">
+                            <input class="archivo-input" type="file" id="fotografia" name="fotografia" accept="image/jpeg,image/png">
+                            <div class="archivo-zona">
+                                <span class="miniatura" id="miniaturaFoto">
+                                    <img id="vistaFoto" alt="Vista previa de la fotografía" hidden>
+                                    <svg id="iconoFoto" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"></path></svg>
+                                </span>
+                                <span class="archivo-texto">
+                                    <strong id="textoFoto">Seleccionar fotografía</strong>
+                                    <small>JPG o PNG · máximo 2 MB</small>
+                                </span>
+                            </div>
+                        </div>
+                        <p class="mensaje-error" id="error-fotografia" aria-live="polite"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============ 2. INFORMACIÓN DE CONTACTO ============ -->
+            <section class="seccion" aria-labelledby="titulo-contacto">
+                <div class="seccion-cabecera">
+                    <span class="numero" aria-hidden="true">2</span>
+                    <div>
+                        <h2 id="titulo-contacto">Información de contacto</h2>
+                        <p>¿Cómo podemos comunicarnos contigo?</p>
+                    </div>
+                </div>
+
+                <div class="rejilla">
+                    <div class="campo">
+                        <label for="correo">Correo electrónico <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <input class="control" type="email" id="correo" name="correo" autocomplete="email" placeholder="nombre@correo.com">
+                        <p class="mensaje-error" id="error-correo" aria-live="polite"></p>
+                    </div>
+
+                    <div class="campo">
+                        <label for="telefono">Número de teléfono <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <div class="entrada-grupo">
+                            <span class="prefijo">+502</span>
+                            <input type="text" id="telefono" name="telefono" inputmode="numeric" autocomplete="tel-national" placeholder="8 dígitos">
+                        </div>
+                        <p class="mensaje-error" id="error-telefono" aria-live="polite"></p>
+                    </div>
+
+                    <div class="campo ancho-completo">
+                        <label for="direccion">Dirección de residencia <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <input class="control" type="text" id="direccion" name="direccion" autocomplete="street-address" placeholder="Calle, avenida, zona, colonia o aldea">
+                        <p class="mensaje-error" id="error-direccion" aria-live="polite"></p>
+                    </div>
+
+                    <div class="campo">
+                        <label for="departamento">Departamento <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <select class="control" id="departamento" name="departamento">
+                            <option value="" selected>Selecciona un departamento</option>
+                        </select>
+                        <p class="mensaje-error" id="error-departamento" aria-live="polite"></p>
+                    </div>
+
+                    <div class="campo">
+                        <label for="municipio">Municipio <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <select class="control" id="municipio" name="municipio" disabled>
+                            <option value="" selected>Primero selecciona un departamento</option>
+                        </select>
+                        <p class="mensaje-error" id="error-municipio" aria-live="polite"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============ 3. INFORMACIÓN ACADÉMICA ============ -->
+            <section class="seccion" aria-labelledby="titulo-academica">
+                <div class="seccion-cabecera">
+                    <span class="numero" aria-hidden="true">3</span>
+                    <div>
+                        <h2 id="titulo-academica">Información académica</h2>
+                        <p>Tu formación más alta alcanzada.</p>
+                    </div>
+                </div>
+
+                <div class="rejilla">
+                    <div class="campo">
+                        <label for="nivelAcademico">Nivel académico <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <select class="control" id="nivelAcademico" name="nivelAcademico">
+                            <option value="" selected>Selecciona un nivel</option>
+                            <option value="Primaria">Primaria</option>
+                            <option value="Básicos">Básicos</option>
+                            <option value="Diversificado">Diversificado</option>
+                            <option value="Técnico universitario">Técnico universitario</option>
+                            <option value="Licenciatura">Licenciatura</option>
+                            <option value="Maestría">Maestría</option>
+                            <option value="Doctorado">Doctorado</option>
+                        </select>
+                        <p class="mensaje-error" id="error-nivelAcademico" aria-live="polite"></p>
+                    </div>
+
+                    <div class="campo">
+                        <label for="profesion">Profesión o especialidad <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <input class="control" type="text" id="profesion" name="profesion" placeholder="Ej. Ingeniería en Sistemas">
+                        <p class="mensaje-error" id="error-profesion" aria-live="polite"></p>
+                    </div>
+
+                    <div class="campo">
+                        <label for="institucion">Institución educativa <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <input class="control" type="text" id="institucion" name="institucion" placeholder="Ej. Universidad de San Carlos de Guatemala">
+                        <p class="mensaje-error" id="error-institucion" aria-live="polite"></p>
+                    </div>
+
+                    <div class="campo">
+                        <label for="anioGraduacion">Año de graduación <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <input class="control" type="number" id="anioGraduacion" name="anioGraduacion" min="1950" step="1" inputmode="numeric" placeholder="Ej. 2020">
+                        <p class="mensaje-error" id="error-anioGraduacion" aria-live="polite"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============ 4. EXPERIENCIA LABORAL ============ -->
+            <section class="seccion" aria-labelledby="titulo-experiencia">
+                <div class="seccion-cabecera">
+                    <span class="numero" aria-hidden="true">4</span>
+                    <div>
+                        <h2 id="titulo-experiencia">Experiencia laboral</h2>
+                        <p>Háblanos de tu último trabajo.</p>
+                    </div>
+                </div>
+
+                <div class="rejilla">
+                    <fieldset class="campo grupo ancho-completo">
+                        <legend>¿Tiene experiencia laboral? <span class="obligatorio" aria-hidden="true">*</span></legend>
+                        <div class="opciones">
+                            <label class="opcion"><input type="radio" name="experiencia" value="si"><span>Sí</span></label>
+                            <label class="opcion"><input type="radio" name="experiencia" value="no"><span>No</span></label>
+                        </div>
+                        <p class="mensaje-error" id="error-experiencia" aria-live="polite"></p>
+                    </fieldset>
+                </div>
+
+                <!-- Se muestra únicamente cuando el usuario responde "Sí" -->
+                <div class="rejilla bloque-experiencia" id="bloqueExperiencia" hidden>
+                    <div class="campo">
+                        <label for="empresa">Última empresa donde laboró <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <input class="control" type="text" id="empresa" name="empresa" autocomplete="organization" placeholder="Nombre de la empresa" disabled>
+                        <p class="mensaje-error" id="error-empresa" aria-live="polite"></p>
+                    </div>
+
+                    <div class="campo">
+                        <label for="puesto">Puesto desempeñado <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <input class="control" type="text" id="puesto" name="puesto" placeholder="Ej. Analista de datos" disabled>
+                        <p class="mensaje-error" id="error-puesto" aria-live="polite"></p>
+                    </div>
+
+                    <div class="campo">
+                        <label for="fechaInicio">Fecha de inicio <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <input class="control" type="date" id="fechaInicio" name="fechaInicio" disabled>
+                        <p class="mensaje-error" id="error-fechaInicio" aria-live="polite"></p>
+                    </div>
+
+                    <div class="campo">
+                        <label for="fechaFin">Fecha de finalización <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <input class="control" type="date" id="fechaFin" name="fechaFin" disabled>
+                        <p class="mensaje-error" id="error-fechaFin" aria-live="polite"></p>
+                    </div>
+
+                    <div class="campo ancho-completo">
+                        <label for="funciones">Descripción de funciones realizadas <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <textarea class="control" id="funciones" name="funciones" rows="4" maxlength="500" placeholder="Describe tus principales responsabilidades y logros." disabled></textarea>
+                        <div class="pie-campo">
+                            <p class="mensaje-error" id="error-funciones" aria-live="polite"></p>
+                            <span class="contador" id="contadorFunciones">0 / 500</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============ 5. CONFIRMACIÓN ============ -->
+            <section class="seccion" aria-labelledby="titulo-confirmacion">
+                <div class="seccion-cabecera">
+                    <span class="numero" aria-hidden="true">5</span>
+                    <div>
+                        <h2 id="titulo-confirmacion">Confirmación</h2>
+                        <p>Adjunta tu hoja de vida y confirma tu solicitud.</p>
+                    </div>
+                </div>
+
+                <div class="rejilla">
+                    <div class="campo ancho-completo">
+                        <label for="hojaVida">Hoja de vida (PDF) <span class="obligatorio" aria-hidden="true">*</span></label>
+                        <div class="archivo">
+                            <input class="archivo-input" type="file" id="hojaVida" name="hojaVida" accept=".pdf,application/pdf">
+                            <div class="archivo-zona">
+                                <span class="miniatura miniatura-pdf" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5"></path><path d="M9 13h6M9 17h4"></path></svg>
+                                </span>
+                                <span class="archivo-texto">
+                                    <strong id="nombrePdf">Seleccionar o arrastrar tu hoja de vida</strong>
+                                    <small>Solo formato PDF · máximo 5 MB</small>
+                                </span>
+                            </div>
+                        </div>
+                        <p class="mensaje-error" id="error-hojaVida" aria-live="polite"></p>
+                    </div>
+
+                    <div class="campo ancho-completo">
+                        <label class="casilla" for="aceptaDatos">
+                            <input type="checkbox" id="aceptaDatos" name="aceptaDatos">
+                            <span>
+                                Autorizo el tratamiento de mis datos personales para fines de reclutamiento y selección de personal. <span class="obligatorio" aria-hidden="true">*</span>
+                            </span>
+                        </label>
+                        <p class="mensaje-error" id="error-aceptaDatos" aria-live="polite"></p>
+                    </div>
+                </div>
+
+                <p class="estado-formulario" id="estadoFormulario" role="alert" hidden></p>
+
+                <div class="acciones">
+                    <button type="submit" class="boton boton-primario">Registrar solicitud</button>
+                    <button type="reset" class="boton boton-secundario">Limpiar formulario</button>
+                </div>
+            </section>
+        </form>
+    </main>
+
+    <footer class="pie">
+        <p>Tus datos serán tratados de forma confidencial y utilizados únicamente en procesos de selección.</p>
+    </footer>
+
+    <!-- Mensaje de confirmación cuando el formulario es válido -->
+    <dialog id="dialogoExito" aria-labelledby="tituloExito">
+        <div class="icono-exito" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+        </div>
+        <h2 id="tituloExito">¡Solicitud registrada!</h2>
+        <p id="mensajeExito"></p>
+        <dl class="resumen" id="resumenExito"></dl>
+        <button type="button" class="boton boton-primario" id="btnCerrarExito">Aceptar</button>
+    </dialog>
+</body>
+
+</html>

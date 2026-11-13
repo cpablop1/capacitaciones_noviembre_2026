@@ -1,0 +1,9 @@
+[
+    {
+        "id": "1",
+        "nombre": "Desarrolador una feature de ingesos.",
+        "descripcion": "Módulo de ingresos dentro del sistema de actividades no categorizadas.",
+        "prioridad": "Alta",
+        "estado": "Pendiente"
+    }
+]

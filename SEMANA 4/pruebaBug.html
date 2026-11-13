@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario Web</title>
+    <style>
+        :root {
+            --bg: #eef2ff;
+            --card: #ffffff;
+            --texto: #1e293b;
+            --suave: #64748b;
+            --borde: #e2e8f0;
+            --primario: #4f46e5;
+            --primario-oscuro: #4338ca;
+            --error: #dc2626;
+            --ok: #16a34a;
+            --radio: 14px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            color: var(--texto);
+            background: linear-gradient(135deg, #e0e7ff 0%, #f5f3ff 50%, #fce7f3 100%);
+        }
+
+        .tarjeta {
+            width: 100%;
+            max-width: 440px;
+            background: var(--card);
+            border-radius: 20px;
+            padding: 32px 28px;
+            box-shadow: 0 20px 45px rgba(79, 70, 229, 0.15);
+        }
+
+        h1 {
+            margin: 0 0 4px;
+            font-size: 1.6rem;
+        }
+
+        .subtitulo {
+            margin: 0 0 24px;
+            color: var(--suave);
+            font-size: 0.95rem;
+        }
+
+        .campo { margin-bottom: 18px; }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 1rem;
+            color: var(--texto);
+            border: 2px solid var(--borde);
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--primario);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+        }
+
+        input.invalido {
+            border-color: var(--error);
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.12);
+        }
+
+        .error-campo {
+            margin: 6px 0 0;
+            min-height: 1.1em;
+            font-size: 0.85rem;
+            color: var(--error);
+        }
+
+        .acciones {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        button {
+            flex: 1;
+            padding: 13px 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.2s, border-color 0.2s;
+        }
+
+        button:active { transform: scale(0.97); }
+
+        .btn-primario {
+            color: #fff;
+            border: none;
+            background: var(--primario);
+        }
+
+        .btn-primario:hover { background: var(--primario-oscuro); }
+
+        .btn-secundario {
+            color: var(--suave);
+            background: transparent;
+            border: 2px solid var(--borde);
+        }
+
+        .btn-secundario:hover {
+            color: var(--texto);
+            border-color: var(--suave);
+        }
+
+        .resultado {
+            margin-top: 28px;
+            padding: 20px;
+            background: #f8fafc;
+            border: 1px solid var(--borde);
+            border-radius: var(--radio);
+            animation: aparecer 0.35s ease;
+        }
+
+        .resultado[hidden] { display: none; }
+
+        .resultado h2 {
+            margin: 0 0 14px;
+            font-size: 1.05rem;
+        }
+
+        .fila {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--borde);
+            font-size: 0.95rem;
+        }
+
+        .fila span:first-child { color: var(--suave); }
+        .fila span:last-child { font-weight: 600; }
+
+        .fila.descuento span:last-child { color: var(--ok); }
+
+        .total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            padding: 14px 16px;
+            color: #fff;
+            background: var(--primario);
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        @keyframes aparecer {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="tarjeta">
+        <h1>Calculadora de Stock</h1>
+        <p class="subtitulo">Calcula el total de tu compra con envío y descuento.</p>
+
+        <!-- novalidate: la validación la hace el script y muestra mensajes propios -->
+        <form id="formCalculadora" novalidate>
+            <div class="campo">
+                <label for="precio">Precio (Q)</label>
+                <input type="number" id="precio" name="precio" value="100" min="0.01" step="0.01" required>
+                <p class="error-campo" id="errorPrecio"></p>
+            </div>
+
+            <div class="campo">
+                <label for="cantidad">Cantidad</label>
+                <input type="number" id="cantidad" name="cantidad" value="10" min="1" step="1" required>
+                <p class="error-campo" id="errorCantidad"></p>
+            </div>
+
+            <div class="acciones">
+                <button type="submit" id="btnCalcular" class="btn-primario">Calcular Total</button>
+                <button type="button" id="btnLimpiar" class="btn-secundario">Limpiar</button>
+            </div>
+        </form>
+
+        <section id="resultado" class="resultado" hidden>
+            <h2>Resultado de la compra</h2>
+            <div class="fila"><span>Subtotal</span><span id="subtotal"></span></div>
+            <div class="fila"><span>Envío</span><span id="envio"></span></div>
+            <div class="fila"><span>Descuento</span><span id="descuento"></span></div>
+            <div class="fila descuento"><span>Monto descontado</span><span id="montoDescuento"></span></div>
+            <div class="total"><span>Total a pagar</span><span id="total"></span></div>
+        </section>
+    </main>
+
+    <script>
+        const ENVIO = 15; // Q
+
+        const $ = (id) => document.getElementById(id);
+        const formatoQ = (centavos) => "Q" + (centavos / 100).toFixed(2);
+
+        /**
+         * Devuelve el porcentaje de descuento según el total (en quetzales).
+         *  - Menor a Q500   -> 3%
+         *  - Menor a Q1000  -> 5%
+         *  - Q1000 o más    -> 7%
+         */
+        function calcularDescuento(total) {
+            if (total < 500) return 3;
+            if (total < 1000) return 5;
+            return 7;
+        }
+
+        /** Valida el precio. Devuelve un mensaje de error o "" si es válido. */
+        function validarPrecio(texto) {
+            if (texto.trim() === "") return "El precio es obligatorio.";
+            const precio = Number(texto);
+            if (!Number.isFinite(precio)) return "El precio debe ser un número.";
+            if (precio <= 0) return "El precio debe ser mayor a 0.";
+            if (Math.round(precio * 100) !== Number((precio * 100).toFixed(6))) {
+                return "El precio admite máximo 2 decimales.";
+            }
+            return "";
+        }
+
+        /** Valida la cantidad. Devuelve un mensaje de error o "" si es válida. */
+        function validarCantidad(texto) {
+            if (texto.trim() === "") return "La cantidad es obligatoria.";
+            const cantidad = Number(texto);
+            if (!Number.isFinite(cantidad)) return "La cantidad debe ser un número.";
+            if (!Number.isInteger(cantidad)) return "La cantidad debe ser un número entero.";
+            if (cantidad < 1) return "La cantidad debe ser al menos 1.";
+            return "";
+        }
+
+        /** Muestra u oculta el error de un campo. Devuelve true si el campo es válido. */
+        function mostrarError(inputId, errorId, mensaje) {
+            $(errorId).textContent = mensaje;
+            $(inputId).classList.toggle("invalido", mensaje !== "");
+            return mensaje === "";
+        }
+
+        function validarFormulario() {
+            const precioOk = mostrarError("precio", "errorPrecio", validarPrecio($("precio").value));
+            const cantidadOk = mostrarError("cantidad", "errorCantidad", validarCantidad($("cantidad").value));
+            return precioOk && cantidadOk;
+        }
+
+        /** Vacía los campos, quita los errores y oculta los resultados. */
+        function limpiarFormulario() {
+            $("precio").value = "";
+            $("cantidad").value = "";
+            mostrarError("precio", "errorPrecio", "");
+            mostrarError("cantidad", "errorCantidad", "");
+
+            ["subtotal", "envio", "descuento", "montoDescuento", "total"]
+                .forEach((id) => { $(id).textContent = ""; });
+            $("resultado").hidden = true;
+
+            $("precio").focus();
+        }
+
+        // Validación en tiempo real al escribir
+        $("precio").addEventListener("input", () =>
+            mostrarError("precio", "errorPrecio", validarPrecio($("precio").value)));
+        $("cantidad").addEventListener("input", () =>
+            mostrarError("cantidad", "errorCantidad", validarCantidad($("cantidad").value)));
+
+        $("btnLimpiar").addEventListener("click", limpiarFormulario);
+
+        $("formCalculadora").addEventListener("submit", (e) => {
+            e.preventDefault(); // evita que el formulario recargue la página
+
+            if (!validarFormulario()) {
+                $("resultado").hidden = true;
+                return;
+            }
+
+            const precio = Number($("precio").value);
+            const cantidad = Number($("cantidad").value);
+
+            // Se calcula en centavos (enteros) para evitar errores de punto flotante
+            const subtotal = Math.round(precio * 100) * cantidad;
+            const envio = ENVIO * 100;
+            const base = subtotal + envio;
+            const descuentoPct = calcularDescuento(base / 100);
+            const montoDescuento = Math.round(base * descuentoPct / 100);
+            const total = base - montoDescuento;
+
+            $("subtotal").textContent = formatoQ(subtotal);
+            $("envio").textContent = formatoQ(envio);
+            $("descuento").textContent = descuentoPct + "%";
+            $("montoDescuento").textContent = formatoQ(montoDescuento);
+            $("total").textContent = formatoQ(total);
+            $("resultado").hidden = false;
+        });
+    </script>
+</body>
+
+</html>

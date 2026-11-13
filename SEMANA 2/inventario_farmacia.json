@@ -1,0 +1,32 @@
+{
+  "tema": "Claro",
+  "productos": [
+    {
+      "nombre": "ViroGrip",
+      "existencia": 50,
+      "descripcion": "Medicamento para la gripe",
+      "ingreso": "2026-11-10",
+      "precio": 2.0,
+      "caducidad": "2026-12-05",
+      "id": 1
+    },
+    {
+      "nombre": "Suero de coco",
+      "existencia": 100,
+      "descripcion": "Electrolíto",
+      "ingreso": "2026-11-10",
+      "precio": 14.0,
+      "caducidad": "2027-01-01",
+      "id": 2
+    },
+    {
+      "nombre": "suero de fresa",
+      "existencia": 100,
+      "descripcion": "electrolito",
+      "ingreso": "2026-11-10",
+      "precio": 14.0,
+      "caducidad": "2027-01-01",
+      "id": 3
+    }
+  ]
+}
